@@ -1,0 +1,37 @@
+[0122/201752.365:ERROR:registration_protocol_win.cc(84)] TransactNamedPipe: Канал был закрыт. (0x6D)
+[0122/201813.261:ERROR:process_reader_win.cc(123)] NtOpenThread: {Отказано в доступе} Процесс запросил доступ к объекту, но права на доступ не предоставлены. (0xc0000022)
+[0122/201813.650:ERROR:exception_snapshot_win.cc(88)] thread ID 21156 not found in process
+[0122/201815.461:ERROR:process_reader_win.cc(123)] NtOpenThread: {Отказано в доступе} Процесс запросил доступ к объекту, но права на доступ не предоставлены. (0xc0000022)
+[0122/201815.468:ERROR:exception_snapshot_win.cc(88)] thread ID 29544 not found in process
+[0122/201822.238:ERROR:process_reader_win.cc(151)] SuspendThread: Отказано в доступе. (0x5)
+[0122/201822.242:ERROR:process_reader_win.cc(151)] SuspendThread: Отказано в доступе. (0x5)
+[0122/201822.374:ERROR:process_reader_win.cc(151)] SuspendThread: Отказано в доступе. (0x5)
+[0122/201822.375:ERROR:process_reader_win.cc(151)] SuspendThread: Отказано в доступе. (0x5)
+[0122/201822.375:ERROR:process_reader_win.cc(151)] SuspendThread: Отказано в доступе. (0x5)
+[0122/201822.375:ERROR:process_reader_win.cc(151)] SuspendThread: Отказано в доступе. (0x5)
+[0122/201822.375:ERROR:process_reader_win.cc(123)] NtOpenThread: {Отказано в доступе} Процесс запросил доступ к объекту, но права на доступ не предоставлены. (0xc0000022)
+[0122/201822.377:ERROR:exception_snapshot_win.cc(88)] thread ID 18268 not found in process
+[0122/201824.048:ERROR:process_reader_win.cc(123)] NtOpenThread: {Отказано в доступе} Процесс запросил доступ к объекту, но права на доступ не предоставлены. (0xc0000022)
+[0122/201824.364:ERROR:exception_snapshot_win.cc(88)] thread ID 1148 not found in process
+[0122/201825.065:ERROR:process_reader_win.cc(151)] SuspendThread: Отказано в доступе. (0x5)
+[0122/201825.076:ERROR:process_reader_win.cc(123)] NtOpenThread: {Отказано в доступе} Процесс запросил доступ к объекту, но права на доступ не предоставлены. (0xc0000022)
+[0122/201825.078:ERROR:exception_snapshot_win.cc(88)] thread ID 17848 not found in process
+[0122/201830.605:ERROR:process_reader_win.cc(151)] SuspendThread: Отказано в доступе. (0x5)
+[0122/201830.611:ERROR:process_reader_win.cc(123)] NtOpenThread: {Отказано в доступе} Процесс запросил доступ к объекту, но права на доступ не предоставлены. (0xc0000022)
+[0122/201830.612:ERROR:exception_snapshot_win.cc(88)] thread ID 32660 not found in process
+[0122/201831.599:ERROR:process_reader_win.cc(151)] SuspendThread: Отказано в доступе. (0x5)
+[0122/201831.612:ERROR:process_reader_win.cc(123)] NtOpenThread: {Отказано в доступе} Процесс запросил доступ к объекту, но права на доступ не предоставлены. (0xc0000022)
+[0122/201831.614:ERROR:exception_snapshot_win.cc(88)] thread ID 32612 not found in process
+[0122/201832.519:ERROR:process_reader_win.cc(151)] SuspendThread: Отказано в доступе. (0x5)
+[0122/201832.534:ERROR:process_reader_win.cc(123)] NtOpenThread: {Отказано в доступе} Процесс запросил доступ к объекту, но права на доступ не предоставлены. (0xc0000022)
+[0122/201832.535:ERROR:exception_snapshot_win.cc(88)] thread ID 19352 not found in process
+[0122/201834.112:ERROR:process_reader_win.cc(151)] SuspendThread: Отказано в доступе. (0x5)
+[0122/201834.119:ERROR:process_reader_win.cc(123)] NtOpenThread: {Отказано в доступе} Процесс запросил доступ к объекту, но права на доступ не предоставлены. (0xc0000022)
+[0122/201834.123:ERROR:exception_snapshot_win.cc(88)] thread ID 28284 not found in process
+[0122/201901.312:ERROR:process_reader_win.cc(123)] NtOpenThread: {Отказано в доступе} Процесс запросил доступ к объекту, но права на доступ не предоставлены. (0xc0000022)
+[0122/201901.431:ERROR:exception_snapshot_win.cc(88)] thread ID 37528 not found in process
+[0122/205707.194:ERROR:registration_protocol_win.cc(84)] TransactNamedPipe: Канал был закрыт. (0x6D)
+[0122/205708.630:ERROR:exception_handler_server.cc(526)] ConnectNamedPipe: Идет закрытие канала. (0xE8)
+[0123/200428.399:ERROR:registration_protocol_win.cc(84)] TransactNamedPipe: Канал был закрыт. (0x6D)
+[0123/200433.726:ERROR:exception_handler_server.cc(526)] ConnectNamedPipe: Идет закрытие канала. (0xE8)
+[0123/200433.853:ERROR:exception_handler_server.cc(526)] ConnectNamedPipe: Идет закрытие канала. (0xE8)
