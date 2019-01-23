@@ -4,4 +4,4 @@
 /venv/*
 /static/*
 /templates/*
-token.py
+myToken.py

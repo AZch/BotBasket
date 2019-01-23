@@ -2,7 +2,7 @@ import datetime
 from LastGame import LastGame
 
 class Game():
-    def __init__(self, timeMin, teams, ligue, idOnPage, day, month):
+    def __init__(self, timeMin, teams, ligue, idOnPage, day, month, elemFind, dayFind):
         self.__timeMin = timeMin
         hours = teams.split(' ')[0]
         teamsName = teams.replace(hours, '')
@@ -21,6 +21,11 @@ class Game():
         #self.day = 0
         self.isLastUpdate = False
         self.currURL = ""
+        self.elemFind = elemFind
+        self.dayFind = dayFind
+        self.isAppendData = False
+        self.isValdateData = False
+        self.isSendData = False
 
     def isPrint(self):
         return self.print
@@ -34,12 +39,28 @@ class Game():
     def checkLastUpdate(self):
         return self.isLastUpdate
 
-    def checkTime(self, timePrint = 15):
+    def gameIsAppendData(self):
+        return self.isAppendDAta
+
+    def isValidData(self):
+        return self.isValidateData
+
+    def checkTime(self, timePrint = 35):
         minNow = datetime.datetime.now().hour * 60 + datetime.datetime.now().minute
         check1 = datetime.datetime.now().day
         check2 = self.day
         check3 = self.__timeMin - minNow
         if self.__timeMin - minNow <= timePrint and datetime.datetime.now().day == self.day:
+            return True
+        else:
+            return False
+
+    def checkTimeAfter(self):
+        minNow = datetime.datetime.now().hour * 60 + datetime.datetime.now().minute
+        check1 = datetime.datetime.now().day
+        check2 = self.day
+        check3 = self.__timeMin - minNow
+        if self.__timeMin - minNow < 0 and datetime.datetime.now().day == self.day:
             return True
         else:
             return False

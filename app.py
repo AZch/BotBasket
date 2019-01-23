@@ -3,13 +3,13 @@ import requests
 from threading import Thread
 import Main
 from Game import Game
-import token
+import myToken
 
 lstGame = list()
 mainFunc = Thread(target=Main.startCheck, args=[lstGame])
 mainFunc.start()
 
-token = token.token
+token = myToken.token
 URL = 'https://api.telegram.org/bot' + token + '/'
 
 app = Flask(__name__)

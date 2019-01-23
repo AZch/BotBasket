@@ -8,6 +8,8 @@ from Constants import XPath
 import ExecReq
 import datetime
 from threading import Thread
+from proc import Proc
+from ProcPool import ProcPool
 
 def parseLastCntWin(elems, isFirstTeam, driver, seasonYearStart, seasonYearEnd):
     countElem = 0
@@ -113,6 +115,7 @@ def gameIdForPlayDay(driverGameDay, lstGame, dropLigue, day, month, prevDay, pre
             startI = i
             while i < startI + (countGame) * 2 and i < len(elems):
                 resCmd = elems[i].text + elems[i + 1].text
+                elemFind = elems[i].text.split('\n')[1]
                 resCmd = resCmd.translate({ord(c): None for c in '\n'})
                 if len(resCmd.split(' W-')) > 1:
                     i += 2
@@ -134,9 +137,9 @@ def gameIdForPlayDay(driverGameDay, lstGame, dropLigue, day, month, prevDay, pre
                     continue
                 if timeGame != 24 * 60:
                     #print("time 00:00")
-                    newGame = Game(timeMin=timeGame, teams=resCmd, ligue=ligueName, day=day, month=month, idOnPage=i)
+                    newGame = Game(timeMin=timeGame, teams=resCmd, ligue=ligueName, day=day, month=month, idOnPage=i, elemFind=elemFind, dayFind=day)
                 else:
-                    newGame = Game(timeMin=timeGame, teams=resCmd, ligue=ligueName, day=prevDay, month=prevDayMonth, idOnPage=i)
+                    newGame = Game(timeMin=timeGame, teams=resCmd, ligue=ligueName, day=prevDay, month=prevDayMonth, idOnPage=i, elemFind=elemFind, dayFind=day)
                 lstGame.append(newGame)
                 i += 2
             j += 1
@@ -145,15 +148,19 @@ def gameIdForPlayDay(driverGameDay, lstGame, dropLigue, day, month, prevDay, pre
     driverGameDay.close()
     return lstGame
 
+def getElemGame(driver, gameBaseName):
+    return ExecReq.getElemByXPath("//*[contains(text(), '" + gameBaseName + "')]", driver)
+
 def checkGame(game, seasonYearStart, seasonYearEnd):
     print(game.teams)
-    driver = driverForPlayDay(game.day, game.month)
+    driver = driverForPlayDay(game.dayFind, game.month)
     try:
         ExecReq.clickGetElem(driver, "//*[contains(text(), 'Agree')]")
         ExecReq.clickGetElem(driver, "//*[contains(text(), 'Scheduled')]")
-        elems = ExecReq.getElemsByXPath(XPath.allGame, driver)
-        ExecReq.clickElem(elems[game.idOnPage])
+        #elems = ExecReq.getElemsByXPath(XPath.allGame, driver)
+        ExecReq.clickElem(getElemGame(driver, game.elemFind))
         driver.switch_to.window(driver.window_handles[1])
+        game.currURL = driver.current_url
 
         ''' Получение коэффициента '''
         kf = ExecReq.getKF(driver)
@@ -193,7 +200,6 @@ def checkGame(game, seasonYearStart, seasonYearEnd):
         game.kf = kf
         game.lstHome = home
         game.lstAway = away
-        game.currURL = driver.current_url
     except:
         print('Ошибка:\n', traceback.format_exc())
         driver.close()
@@ -234,6 +240,7 @@ def startCheck(lstGame):
     # for game in lstGame:
     #     checkGame(game, date.year - 1, date.year + 1)
     goGameNextDay = True
+    procPool = ProcPool(2)
     while True:
         if (not goGameNextDay and datetime.datetime.now().hour >= 2 and datetime.datetime.now().hour < 20):
             goGameNextDay = True
@@ -246,6 +253,16 @@ def startCheck(lstGame):
             ThreadPrse.start()
         for game in lstGame:
             if game.checkTime() and not game.isPrint():
-                game.setPrint()
-                ThreadCheckPrint = Thread(target=checkAndPrintGame, args=[lstGame, game, date.year - 1, date.year + 1])
-                ThreadCheckPrint.start()
+                proc = procPool.getProc(game, date.year - 1, date.year + 1, lstGame)
+                if proc != 'wait':
+                    game.setPrint()
+                    proc.start()
+                    time.sleep(1)
+                # ThreadCheckPrint = Thread(target=checkAndPrintGame, args=[lstGame, game, date.year - 1, date.year + 1])
+                # ThreadCheckPrint.start()
+                # time.sleep(40)
+            elif game.checkTimeAfter():
+                try:
+                    lstGame.remove(game)
+                except:
+                    print('Ошибка:\n', traceback.format_exc())
