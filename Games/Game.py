@@ -28,6 +28,7 @@ class Game():
         self.isAppendData = False
         self.isValdateData = False
         self.isSendData = False
+        self.isCheck = False
 
     def isPrint(self):
         return self.print
@@ -105,4 +106,4 @@ class Game():
             return False
 
     def report(self):
-        return str(self.day) + "." + str(self.month) + "\n" + self.ligue + "\n" + self.teams + "\n" + str(self.kf) + "\n" + self.currURL
+        return "#onlyme\n" + str(self.day) + "." + str(self.month) + "\n" + self.ligue + "\n" + self.teams + "\n" + str(self.kf) + "\n" + self.currURL

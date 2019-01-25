@@ -5,6 +5,7 @@ from threading import Thread
 from ProcessGame.ProcPool import ProcPool
 from ProcessData import ParseData
 import ProcessGame.CheckGame
+from WorkWithTG import SendMsg
 
 def startCheck(lstGame, lstSendGame):
     dropLigue = ['USA', 'EURO', 'CANADA', 'ASIA', 'SWEDEN', 'JAPAN', 'Women', 'WOMEN']
@@ -36,6 +37,12 @@ def startCheck(lstGame, lstSendGame):
 
 
         for game in lstGame:
+            if game.checkTime(timePrint=10) and game.isPrint() and game.isCheck:
+                SendMsg.sendSimpleMsg(chatId=281265894, text=game.report())
+                try:
+                    lstGame.remove(game)
+                except:
+                    print('Ошибка:\n', traceback.format_exc())
             if game.checkTime() and not game.isPrint():
                 if not game.isPrint():
                     proc = procPool.getProc(game, date.year - 1, date.year + 1, lstGame, lstSendGame)

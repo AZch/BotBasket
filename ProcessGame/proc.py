@@ -22,14 +22,15 @@ class Proc(Thread):
         self.startTime = time.time()
         try:
             if CheckGame.checkGame(self.game, self.seasonStartYear, self.seasonEndYear):
+                self.game.isCheck = True
                 print(self.game.report())
-                SendMsg.sendSimpleMsg(chatId=-1001497417479, text=self.game.report())  # -1001198541943
-                SendMsg.sendSimpleMsg(chatId=281265894, text=self.game.report())
+                #SendMsg.sendSimpleMsg(chatId=-1001497417479, text=self.game.report())  # -1001198541943
+                #SendMsg.sendSimpleMsg(chatId=281265894, text=self.game.report())
                 self.lstSendGame.append(sendGame(self.game.lstHome, self.game.lstAway, self.game.kf, self.game.elemFind))
-                try:
-                    self.lstGame.remove(self.game)
-                except:
-                    print('Ошибка:\n', traceback.format_exc())
+                # try:
+                #     self.lstGame.remove(self.game)
+                # except:
+                #     print('Ошибка:\n', traceback.format_exc())
             else:
                 try:
                     self.lstGame.remove(self.game)

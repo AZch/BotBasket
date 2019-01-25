@@ -21,7 +21,8 @@ def sendMsgInlineBtn(chatId, game, text="No"):
                               "callback_data": game.elemFind + "|Away"
                           }
 
-                      ]]
+                      ]
+                  ]
               }}
     req = requests.post(url, json=answer)
     return req.json()
