@@ -1,5 +1,5 @@
 import datetime
-from LastGame import LastGame
+
 
 class Game():
     def __init__(self, timeMin, teams, ligue, idOnPage, day, month, elemFind, dayFind):
@@ -8,6 +8,8 @@ class Game():
         teamsName = teams.replace(hours, '')
         self.teams = hours + " " + teamsName.replace(' ', '')
         self.teams = self.teams.replace('-', '     ')
+        self.teamHome = self.teams.split('     ')[0]
+        self.teamAway = self.teams.split('     ')[1]
         self.teams = self.teams.strip()
         self.day = day
         self.month = month
@@ -45,7 +47,7 @@ class Game():
     def isValidData(self):
         return self.isValidateData
 
-    def checkTime(self, timePrint = 35):
+    def checkTime(self, timePrint = 30):
         minNow = datetime.datetime.now().hour * 60 + datetime.datetime.now().minute
         check1 = datetime.datetime.now().day
         check2 = self.day

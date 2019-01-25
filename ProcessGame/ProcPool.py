@@ -1,4 +1,4 @@
-from proc import Proc
+from ProcessGame.proc import Proc
 
 
 
@@ -9,16 +9,16 @@ class ProcPool():
         self.__lstWorkProc = list()
         self.__thisCount = 0
 
-    def getProc(self, game, seasStart, seasEnd, lstGame):
+    def getProc(self, game, seasStart, seasEnd, lstGame, lstSendGame):
         if len(self.__lstExecProc) > 0:
             newProc = self.__lstExecProc.pop(0)
-            newProc.setNewData(game, seasStart, seasEnd, self, lstGame)
+            newProc.setNewData(game, seasStart, seasEnd, self, lstGame, lstSendGame)
             self.__lstWorkProc.append(newProc)
             return newProc
         else:
             if self.__thisCount < self.__maxCountProc:
                 self.__thisCount += 1
-                proc = Proc(game, seasStart, seasEnd, self, lstGame)
+                proc = Proc(game, seasStart, seasEnd, self, lstGame, lstSendGame)
                 self.__lstWorkProc.append(proc)
                 return proc
             else:

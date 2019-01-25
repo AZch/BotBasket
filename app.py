@@ -1,30 +1,16 @@
+import traceback
 from flask import Flask, request
-import requests
 from threading import Thread
-import Main
-from Game import Game
-import myToken
+import StartParseFind
+from WorkWithTG import SendMsg
+from ProcessData import FindSort
 
 lstGame = list()
-mainFunc = Thread(target=Main.startCheck, args=[lstGame])
+lstSendGame = list()
+mainFunc = Thread(target=StartParseFind.startCheck, args=[lstGame, lstSendGame])
 mainFunc.start()
 
-token = myToken.token
-URL = 'https://api.telegram.org/bot' + token + '/'
-
 app = Flask(__name__)
-
-def sendMsg(chatId, text="No"):
-    url = URL + "sendMessage"
-    answer = {"chat_id": chatId, "text": text}
-    req = requests.post(url, json=answer)
-    return req.json()
-
-def getScoreAllGame():
-    resStr = ""
-    for game in lstGame:
-        resStr += game.report() + "\n"
-    return resStr
 
 @app.route('/', methods=['POST', 'GET'])
 def hello_world():
@@ -32,12 +18,19 @@ def hello_world():
     if request.method == 'POST':
         req = request.get_json()
         try:
-            message = req['message']['text']
-            if message == '/list':
-                chatID = req['message']['from']['id']
-                sendMsg(chatId=chatID, text=getScoreAllGame())
+            SendMsg.sendMsgAnswCallBack(req['callback_query']['id'], req['callback_query']['data'], lstSendGame)
         except:
-            print("bad")
+            try:
+                message = req['message']['text']
+                if message == '/list':
+                    chatID = req['message']['from']['id']
+                    SendMsg.sendSimpleMsg(chatId=chatID, text=FindSort.getScoreAllGame(lstGame))
+                if message == '/iswork':
+                    chatID = req['message']['from']['id']
+                    SendMsg.sendSimpleMsg(chatId=chatID, text='yes, count game: ' + str(len(lstGame)))
+            except:
+                print('Ошибка:\n', traceback.format_exc())
+                print("bad")
     return 'Hello World!'
 
 

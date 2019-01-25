@@ -2,6 +2,8 @@ class LastGame():
     def __init__(self, currTeam, score):
         self.__currTeam = currTeam
         self.__score = score
+        self.scoreF = score[0]
+        self.scoreS = score[1]
         self.formatScoreFirst = self.makeFormatScore(score[0])
         self.formatScoreSec = self.makeFormatScore(score[1])
         print(score)
