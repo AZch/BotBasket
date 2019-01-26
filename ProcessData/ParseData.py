@@ -6,6 +6,7 @@ from Constants import XPath
 import traceback
 from Games.Game import Game
 from WorkWithTG import myToken
+from threading import Thread
 
 
 def parseLastCntWin(elems, isFirstTeam, driver, seasonYearStart, seasonYearEnd):
@@ -69,29 +70,33 @@ def parseLastCntWin(elems, isFirstTeam, driver, seasonYearStart, seasonYearEnd):
     driver.switch_to.window(driver.window_handles[1])
     return listRes
 
-# def makeDriver(driver):
-#     driver = webdriver.Chrome(myToken.driverPath)
-#
-# def getDriver():
-#     driver = None
-#     startTime = time.time()
-#     startAllTime = time.time()
-#     threadMakeDriver = Thread(target=makeDriver, args=[driver])
-#     threadMakeDriver.start()
-#     while True:
-#         if driver != None:
-#             return driver
-#         if time.time() - startTime > 240:
-#             threadMakeDriver = Thread(target=makeDriver, args=[driver])
-#             threadMakeDriver.start()
-#             startTime = time.time()
-#
-#         if time.time() - startAllTime > 500:
-#             return driver # скорее всего здесь None
+class makeDriver(Thread):
+    def __init__(self):
+        super().__init__()
+        self.driver = None
+
+    def run(self):
+        self.driver = webdriver.Chrome(myToken.driverPath)
+        self.driver.get('https://www.soccerstand.com/basketball/')
+
+def getDriver():
+    startTime = time.time()
+    startAllTime = time.time()
+    threadMakeDriver = makeDriver()
+    threadMakeDriver.start()
+    while True:
+        if threadMakeDriver.driver != None:
+            return threadMakeDriver.driver
+        if time.time() - startTime > 240:
+            threadMakeDriver = makeDriver()
+            threadMakeDriver.start()
+            startTime = time.time()
+
+        if time.time() - startAllTime > 500:
+            return threadMakeDriver.driver # скорее всего здесь None
 
 def driverForPlayDay(day, month):
-    driver = webdriver.Chrome(myToken.driverPath)
-    driver.get('https://www.soccerstand.com/basketball/')
+    driver = getDriver()
     while True:
         startTime = time.time()
         while True:

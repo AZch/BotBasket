@@ -21,6 +21,13 @@ def sendMsgInlineBtn(chatId, game, text="No"):
                               "callback_data": game.elemFind + "|Away"
                           }
 
+                      ],
+                      [
+                          {
+                              "text": "Fast ANALytics",
+                              "callback_data": game.elemFind + "|Anal"
+                          }
+
                       ]
                   ]
               }}

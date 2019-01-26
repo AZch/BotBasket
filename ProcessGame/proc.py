@@ -21,7 +21,7 @@ class Proc(Thread):
     def run(self):
         self.startTime = time.time()
         try:
-            if CheckGame.checkGame(self.game, self.seasonStartYear, self.seasonEndYear):
+            if CheckGame.checkGame(self.game, self.seasonStartYear, self.seasonEndYear) and self.game.checkGame():
                 self.game.isCheck = True
                 print(self.game.report())
                 #SendMsg.sendSimpleMsg(chatId=-1001497417479, text=self.game.report())  # -1001198541943

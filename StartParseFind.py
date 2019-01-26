@@ -38,7 +38,7 @@ def startCheck(lstGame, lstSendGame):
 
         for game in lstGame:
             if game.checkTime(timePrint=10) and game.isPrint() and game.isCheck:
-                SendMsg.sendSimpleMsg(chatId=281265894, text=game.report())
+                SendMsg.sendMsgInlineBtn(chatId=281265894, text=game.report(), game=game)
                 try:
                     lstGame.remove(game)
                 except:

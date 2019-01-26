@@ -22,6 +22,20 @@ class LastGame():
         else:
             return False
 
+    def getLstQuats(self, isFirstTeam, scoresByQuatr):
+        i = 1
+        countWin = 0
+        while i < len(self.formatScoreFirst) and i < 5:
+            if isFirstTeam and self.formatScoreFirst[i] > self.formatScoreSec[i]:
+                countWin += 1
+            elif not isFirstTeam and self.formatScoreSec[i] > self.formatScoreFirst[i]:
+                countWin += 1
+            else:
+                scoresByQuatr[i - 1] = scoresByQuatr[i - 1] + 1
+            i += 1
+        return scoresByQuatr
+
+
     def isCleanScore(self, isFirstTeam):
         i = 1
         countWin = 0
