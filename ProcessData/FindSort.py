@@ -10,6 +10,11 @@ def findSendGame(elemFindTeam, lstSendGame):
                 return sGame.report(0)
     return "not found"
 
+def findSendLink(elemFind, lstSendGame):
+    for sGame in lstSendGame:
+        if sGame.elemFind == elemFind[0]:
+            return sGame.link
+
 def getScoreAllGame(lstGame):
     resStr = ""
     for game in lstGame:

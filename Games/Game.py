@@ -9,6 +9,7 @@ class Game():
         self.teams = hours + " " + teamsName.replace(' ', '')
         self.teams = self.teams.replace('-', '     ')
         self.teamHome = self.teams.split('     ')[0]
+        self.teamHome = self.teamHome.replace(hours, '')
         self.teamAway = self.teams.split('     ')[1]
         self.teams = self.teams.strip()
         self.day = day
@@ -22,7 +23,7 @@ class Game():
         self.print = False
         #self.day = 0
         self.isLastUpdate = False
-        self.currURL = ""
+        self.currURL = "https://www.soccerstand.com/basketball/"
         self.elemFind = elemFind
         self.dayFind = dayFind
         self.isAppendData = False
@@ -106,4 +107,8 @@ class Game():
             return False
 
     def report(self):
-        return "#onlyme\n" + str(self.day) + "." + str(self.month) + "\n" + self.ligue + "\n" + self.teams + "\n" + str(self.kf) + "\n" + self.currURL
+        if (self.kf[0] > self.kf[1]):
+            resPrint = 'Фора на ' + self.teamHome + ' в четвертях'
+        else:
+            resPrint = 'Фора на ' + self.teamAway + ' в четвертях'
+        return str(self.day) + "." + str(self.month) + "\n" + self.ligue + "\n" + self.teams + "\n" + resPrint

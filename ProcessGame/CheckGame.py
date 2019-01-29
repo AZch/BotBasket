@@ -21,6 +21,7 @@ def checkGame(game, seasonYearStart, seasonYearEnd):
         ExecReq.clickGetElem(driver, "//*[contains(text(), 'Scheduled')]")
         # elems = ExecReq.getElemsByXPath(XPath.allGame, driver)
         ExecReq.clickElem(ParseData.getElemGame(driver, game.elemFind))
+        time.sleep(2)
         driver.switch_to.window(driver.window_handles[1])
         startTime = time.time()
         while True:
@@ -37,6 +38,9 @@ def checkGame(game, seasonYearStart, seasonYearEnd):
 
         ''' Получение коэффициента '''
         kf = ExecReq.getKF(driver)
+        if ExecReq.getElemByXPath("//*[@title='bet365']", driver) == False:
+            print('NOBET365')
+            raise ValueError()
         if kf == False or (kf[0] < 1.4 or kf[1] < 1.4):
             raise ValueError()
         elif kf[0] > kf[1]:

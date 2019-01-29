@@ -58,3 +58,4 @@ def startCheck(lstGame, lstSendGame):
                     lstGame.remove(game)
                 except:
                     print('Ошибка:\n', traceback.format_exc())
+        time.sleep(4)

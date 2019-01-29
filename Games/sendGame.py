@@ -1,15 +1,16 @@
 import time
 
 class sendGame():
-    def __init__(self, lstHome, lstAway, ks, elemFind):
+    def __init__(self, lstHome, lstAway, ks, elemFind, link):
         self.lstHome = lstHome
         self.lstAway = lstAway
         self.kf = ks
         self.startTime = time.time()
         self.elemFind = elemFind
+        self.link = link
 
     def checkEndTime(self):
-        if time.time() - self.startTime > 60 * 10:
+        if time.time() - self.startTime > self.startTime + 60 * 10:
             return True
         else:
             return False

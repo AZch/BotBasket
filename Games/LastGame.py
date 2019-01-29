@@ -32,6 +32,7 @@ class LastGame():
                 countWin += 1
             else:
                 scoresByQuatr[i - 1] = scoresByQuatr[i - 1] + 1
+                return scoresByQuatr
             i += 1
         return scoresByQuatr
 

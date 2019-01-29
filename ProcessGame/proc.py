@@ -26,7 +26,7 @@ class Proc(Thread):
                 print(self.game.report())
                 #SendMsg.sendSimpleMsg(chatId=-1001497417479, text=self.game.report())  # -1001198541943
                 #SendMsg.sendSimpleMsg(chatId=281265894, text=self.game.report())
-                self.lstSendGame.append(sendGame(self.game.lstHome, self.game.lstAway, self.game.kf, self.game.elemFind))
+                self.lstSendGame.append(sendGame(self.game.lstHome, self.game.lstAway, self.game.kf, self.game.elemFind, self.game.currURL))
                 # try:
                 #     self.lstGame.remove(self.game)
                 # except:

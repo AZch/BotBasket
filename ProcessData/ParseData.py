@@ -1,4 +1,5 @@
 import time
+
 from ProcessData import ExecReq
 from Games.LastGame import LastGame
 from selenium import webdriver
@@ -17,6 +18,7 @@ def parseLastCntWin(elems, isFirstTeam, driver, seasonYearStart, seasonYearEnd):
         if yearGame < seasonYearStart or yearGame > seasonYearEnd:
             break
         elems[countElem].click()
+        time.sleep(2)
         driver.switch_to.window(driver.window_handles[2])
         startTime = time.time()
         while True:
@@ -26,6 +28,7 @@ def parseLastCntWin(elems, isFirstTeam, driver, seasonYearStart, seasonYearEnd):
                 driver.close()
                 driver.switch_to.window(driver.window_handles[1])
                 elems[countElem].click()
+                time.sleep(2)
                 driver.switch_to.window(driver.window_handles[2])
             else:
                 break
@@ -45,6 +48,7 @@ def parseLastCntWin(elems, isFirstTeam, driver, seasonYearStart, seasonYearEnd):
             driver.close()
             driver.switch_to.window(driver.window_handles[1])
             elems[countElem].click()
+            time.sleep(2)
             driver.switch_to.window(driver.window_handles[2])
             scoreFirst = ExecReq.getElemByXPath("//*[@class='odd']", driver)
             scoreSec = ExecReq.getElemByXPath("//*[@class='even']", driver)
@@ -76,8 +80,15 @@ class makeDriver(Thread):
         self.driver = None
 
     def run(self):
-        self.driver = webdriver.Chrome(myToken.driverPath)
-        self.driver.get('https://www.soccerstand.com/basketball/')
+        try:
+            try:
+                self.driver.close()
+            except:
+                pass
+            self.driver = webdriver.Chrome(myToken.driverPath)
+            self.driver.get('https://www.soccerstand.com/basketball/')
+        except:
+            print('Ошибка:\n', traceback.format_exc())
 
 def getDriver():
     startTime = time.time()
@@ -85,18 +96,34 @@ def getDriver():
     threadMakeDriver = makeDriver()
     threadMakeDriver.start()
     while True:
-        if threadMakeDriver.driver != None:
-            return threadMakeDriver.driver
-        if time.time() - startTime > 240:
-            threadMakeDriver = makeDriver()
-            threadMakeDriver.start()
-            startTime = time.time()
+        try:
+            if threadMakeDriver.driver != webdriver.Chrome(myToken.driverPath):
+                return threadMakeDriver.driver
+            if time.time() - startTime > 240:
+                try:
+                    threadMakeDriver.driver.close()
+                except:
+                    pass
+                threadMakeDriver = makeDriver()
+                threadMakeDriver.start()
+                startTime = time.time()
 
-        if time.time() - startAllTime > 500:
-            return threadMakeDriver.driver # скорее всего здесь None
+            if time.time() - startAllTime > 500:
+                return threadMakeDriver.driver # скорее всего здесь None
+        except:
+            print('Ошибка:\n', traceback.format_exc())
+
 
 def driverForPlayDay(day, month):
-    driver = getDriver()
+    driver = webdriver.Chrome(myToken.driverPath)
+    driver.set_page_load_timeout(60)
+    notFin = True
+    while notFin:
+        try:
+            driver.get('https://www.soccerstand.com/basketball/')
+            notFin = False
+        except:
+            time.sleep(5)
     while True:
         startTime = time.time()
         while True:
@@ -129,7 +156,7 @@ def waitLoading(driver):
         try:
             if ExecReq.getElemByXPath("//*[contains(text(), 'Loading')]", driver).text == '':
                 break
-            if time.time() - startTime > 3:
+            if time.time() - startTime > 4:
                 break
         except:
             break
@@ -141,10 +168,13 @@ def gameIdForPlayDay(driverGameDay, lstGame, dropLigue, day, month, prevDay, pre
     try:
         ExecReq.clickGetElem(driverGameDay, "//*[contains(text(), 'Agree')]")
         ExecReq.clickGetElem(driverGameDay, "//*[contains(text(), 'Scheduled')]")
+        time.sleep(2)
         elemsLigue = ExecReq.getElemsByXPath("//table[@class='basketball']", driverGameDay)
+        print(len(elemsLigue))
         j = 0
         i = 0
         elems = ExecReq.getElemsByXPath(XPath.allGame, driverGameDay)
+        print(len(elems))
         while j < len(elemsLigue):
             countLigue = 1
             ligueName = elemsLigue[j].text.split('\n')[1]
@@ -163,15 +193,20 @@ def gameIdForPlayDay(driverGameDay, lstGame, dropLigue, day, month, prevDay, pre
                 resCmd = elems[i].text + elems[i + 1].text
                 elemFind = elems[i + 1].text.split('\n')[0]
                 resCmd = resCmd.translate({ord(c): None for c in '\n'})
-                if len(resCmd.split(' W-')) > 1:
-                    i += 2
-                    continue
+                # if len(resCmd.split(' W-')) > 1:
+                #     i += 2
+                #     continue
                 timeGame = resCmd.split()[0].split(":")
                 timeGame = int(timeGame[0]) * 60 + int(timeGame[1])
                 if timeGame == 0:
                     timeGame = 24 * 60
                 print(resCmd)
                 isDrop = False
+                if 'FRO' in resCmd:
+                    i += 2
+                    print('drop')
+                    continue
+
                 for oneDropLigue in dropLigue:
                     if oneDropLigue in ligueName:
                         i += 2
