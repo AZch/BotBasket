@@ -19,7 +19,7 @@ class sendGame():
     # 1 игры дома
     # 2 игры гости
     def report(self, flagParse):
-        if flagParse == 0:
+        if flagParse == 0 or flagParse == 3:
             firstStat = "N"
             secStat = "N"
             isFirst = False
@@ -33,11 +33,19 @@ class sendGame():
                 isFirst = True
             scoreQuatFirst = [0] * 4
             scoreQuatSec = [0] * 4
-            for i in range(len(self.lstHome)):
-                scoreQuatFirst = self.lstHome[i].getLstQuats(isFirstTeam=isFirst, scoresByQuatr=scoreQuatFirst)
-                scoreQuatSec = self.lstAway[i].getLstQuats(isFirstTeam=isFirst, scoresByQuatr=scoreQuatSec)
-            return firstStat + "\n" + ' '.join(str(num) for num in scoreQuatFirst) + "\n" + \
-                  ' '.join(str(num) for num in scoreQuatSec) + "\n" + secStat + "\n (в какой четверти вин)"
+            if flagParse == 0:
+                for i in range(len(self.lstHome)):
+                    scoreQuatFirst = self.lstHome[i].getLstQuats(isFirstTeam=isFirst, scoresByQuatr=scoreQuatFirst)
+                    scoreQuatSec = self.lstAway[i].getLstQuats(isFirstTeam=isFirst, scoresByQuatr=scoreQuatSec)
+                return firstStat + "\n" + ' '.join(str(num) for num in scoreQuatFirst) + "\n" + \
+                      ' '.join(str(num) for num in scoreQuatSec) + "\n" + secStat + "\n (в какой четверти первый вин)"
+            elif flagParse == 3:
+                for i in range(len(self.lstHome)):
+                    scoreQuatFirst = self.lstHome[i].getAllLstQuats(isFirstTeam=isFirst, scoresByQuatr=scoreQuatFirst)
+                    scoreQuatSec = self.lstAway[i].getAllLstQuats(isFirstTeam=isFirst, scoresByQuatr=scoreQuatSec)
+                return firstStat + "\n" + ' '.join(str(num) for num in scoreQuatFirst) + "\n" + \
+                      ' '.join(str(num) for num in scoreQuatSec) + "\n" + secStat + "\n (все выигрышные четверти)"
+
 
 
         count = 1

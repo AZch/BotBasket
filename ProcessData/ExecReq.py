@@ -17,7 +17,7 @@ def getElemByXPath(XPath, driver):
             elem = driver.find_element_by_xpath(XPath)
             break
         except:
-            if time.time() - timeStart > 5:
+            if time.time() - timeStart > 15:
                 print('Ошибка:\n', traceback.format_exc())
                 return False
             continue

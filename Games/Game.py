@@ -1,15 +1,15 @@
 import datetime
-
+from WorkWithTG import SendMsg
 
 class Game():
     def __init__(self, timeMin, teams, ligue, idOnPage, day, month, elemFind, dayFind):
         self.__timeMin = timeMin
-        hours = teams.split(' ')[0]
-        teamsName = teams.replace(hours, '')
-        self.teams = hours + " " + teamsName.replace(' ', '')
+        self.hours = teams.split(' ')[0]
+        teamsName = teams.replace(self.hours, '')
+        self.teams = self.hours + " " + teamsName.replace(' ', '')
         self.teams = self.teams.replace('-', '     ')
         self.teamHome = self.teams.split('     ')[0]
-        self.teamHome = self.teamHome.replace(hours, '')
+        self.teamHome = self.teamHome.replace(self.hours + " ", '')
         self.teamAway = self.teams.split('     ')[1]
         self.teams = self.teams.strip()
         self.day = day
@@ -49,7 +49,7 @@ class Game():
     def isValidData(self):
         return self.isValidateData
 
-    def checkTime(self, timePrint = 30):
+    def checkTime(self, timePrint = 35):
         minNow = datetime.datetime.now().hour * 60 + datetime.datetime.now().minute
         check1 = datetime.datetime.now().day
         check2 = self.day
@@ -81,6 +81,10 @@ class Game():
             if kfHome < 1.4 or kfAway < 1.4:
                 return False
             if (kfHome >= kfMin and kfHome < kfAway):
+                if (self.teamHome == 'IllawarraHawks' or self.teamHome == 'SonicBoom' or self.teamHome == 'TecnycontaZaragoza' or self.teamHome == 'BarcelonaB'):
+                    SendMsg.sendSimpleMsg(chatId=281265894, text=self.report())
+                    SendMsg.sendSimpleMsg(chatId=281265894, text='bad team zaragoza, barcelona')
+                    return False
                 for homeGame in self.lstHome:
                     if homeGame.isCleanScore(isFirstTeam=True):
                         countCleanHome += 1
@@ -90,6 +94,10 @@ class Game():
                         countCleanAway += 1
                         return False
             elif (kfAway >= kfMin and kfAway < kfHome):
+                if (self.teamAway == 'IllawarraHawks' or self.teamAway == 'SonicBoom' or self.teamAway == 'TecnycontaZaragoza' or self.teamAway == 'BarcelonaB'):
+                    SendMsg.sendSimpleMsg(chatId=281265894, text=self.report())
+                    SendMsg.sendSimpleMsg(chatId=281265894, text='bad team zaragoza, barcelona')
+                    return False
                 for homeGame in self.lstHome:
                     if homeGame.isCleanScore(isFirstTeam=False):
                         countCleanHome += 1
@@ -107,8 +115,11 @@ class Game():
             return False
 
     def report(self):
-        if (self.kf[0] > self.kf[1]):
-            resPrint = 'Фора на ' + self.teamHome + ' в четвертях'
-        else:
-            resPrint = 'Фора на ' + self.teamAway + ' в четвертях'
-        return str(self.day) + "." + str(self.month) + "\n" + self.ligue + "\n" + self.teams + "\n" + resPrint
+        try:
+            if self.kf[0] > self.kf[1]:
+                resPrint = 'Фора на ' + self.teamHome + ' в четвертях'
+            else:
+                resPrint = 'Фора на ' + self.teamAway + ' в четвертях'
+        except:
+            resPrint = ""
+        return str(self.day) + "." + str(self.month) + " в " + self.hours + "\n" + self.ligue + "\n" + self.teamHome + " - " + self.teamAway + "\n" + resPrint

@@ -38,9 +38,6 @@ def checkGame(game, seasonYearStart, seasonYearEnd):
 
         ''' Получение коэффициента '''
         kf = ExecReq.getKF(driver)
-        if ExecReq.getElemByXPath("//*[@title='bet365']", driver) == False:
-            print('NOBET365')
-            raise ValueError()
         if kf == False or (kf[0] < 1.4 or kf[1] < 1.4):
             raise ValueError()
         elif kf[0] > kf[1]:
@@ -50,6 +47,10 @@ def checkGame(game, seasonYearStart, seasonYearEnd):
         else:
             isFirstTeam = True
             print("kf team equel")
+        #isFirstTeam = True
+        #if ExecReq.getElemByXPath("//*[@title='bet365']", driver) == False:
+        #     print('NOBET365')
+        #     raise ValueError()
 
         ''' Получить домашние игры '''
         ExecReq.clickGetElem(driver, XPath.clickH2H)

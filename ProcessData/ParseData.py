@@ -1,5 +1,8 @@
 import time
 
+from selenium.webdriver import ActionChains
+from selenium.webdriver.chrome.options import Options
+
 from ProcessData import ExecReq
 from Games.LastGame import LastGame
 from selenium import webdriver
@@ -9,24 +12,32 @@ from Games.Game import Game
 from WorkWithTG import myToken
 from threading import Thread
 
+from pyvirtualdisplay import Display
+display = Display(visible=0, size=(1920, 1080)).start()
+
 
 def parseLastCntWin(elems, isFirstTeam, driver, seasonYearStart, seasonYearEnd):
+    #for elem in elems:
+    #    print(elem.text)
     countElem = 0
     listRes = list()
     while 5 > len(listRes) and countElem < len(elems):
         yearGame = int("20" + elems[countElem].text.split()[0].split('.')[-1])
         if yearGame < seasonYearStart or yearGame > seasonYearEnd:
             break
+          
+
         elems[countElem].click()
-        time.sleep(2)
+
         driver.switch_to.window(driver.window_handles[2])
         startTime = time.time()
         while True:
-            if time.time() - startTime > 90:
+            if time.time() - startTime > 240:
                 break
             if ExecReq.getElemByXPath("//*[contains(text(), 'Match Summary')]", driver) == False:
                 driver.close()
                 driver.switch_to.window(driver.window_handles[1])
+                time.sleep(1)
                 elems[countElem].click()
                 time.sleep(2)
                 driver.switch_to.window(driver.window_handles[2])
@@ -74,55 +85,26 @@ def parseLastCntWin(elems, isFirstTeam, driver, seasonYearStart, seasonYearEnd):
     driver.switch_to.window(driver.window_handles[1])
     return listRes
 
-class makeDriver(Thread):
-    def __init__(self):
-        super().__init__()
-        self.driver = None
-
-    def run(self):
-        try:
-            try:
-                self.driver.close()
-            except:
-                pass
-            self.driver = webdriver.Chrome(myToken.driverPath)
-            self.driver.get('https://www.soccerstand.com/basketball/')
-        except:
-            print('Ошибка:\n', traceback.format_exc())
-
-def getDriver():
-    startTime = time.time()
-    startAllTime = time.time()
-    threadMakeDriver = makeDriver()
-    threadMakeDriver.start()
-    while True:
-        try:
-            if threadMakeDriver.driver != webdriver.Chrome(myToken.driverPath):
-                return threadMakeDriver.driver
-            if time.time() - startTime > 240:
-                try:
-                    threadMakeDriver.driver.close()
-                except:
-                    pass
-                threadMakeDriver = makeDriver()
-                threadMakeDriver.start()
-                startTime = time.time()
-
-            if time.time() - startAllTime > 500:
-                return threadMakeDriver.driver # скорее всего здесь None
-        except:
-            print('Ошибка:\n', traceback.format_exc())
 
 
 def driverForPlayDay(day, month):
-    driver = webdriver.Chrome(myToken.driverPath)
-    driver.set_page_load_timeout(60)
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
     notFin = True
     while notFin:
-        try:
+        try:    
+            driver = webdriver.Chrome("/usr/bin/chromedriver",chrome_options=chrome_options)
+            driver.set_page_load_timeout(80)
+
             driver.get('https://www.soccerstand.com/basketball/')
+            currDate = ExecReq.getElemByXPath("//*[@class='day today']", driver).text.split()[0]
             notFin = False
         except:
+            print('TIMEOUT:\n', traceback.format_exc())
+            print('timeout')
+            #driver = webdriver.Chrome("/usr/bin/chromedriver",chrome_options=chrome_options)
+            #driver.set_page_load_timeout(80)
             time.sleep(5)
     while True:
         startTime = time.time()
@@ -140,14 +122,21 @@ def driverForPlayDay(day, month):
 
         currDay = int(currDate.split('/')[0])
         currMonth = int(currDate.split('/')[1])
-        if month < currMonth or day < currDay:
+        if month < currMonth:
             ExecReq.clickGetElem(driver, "//*[@class='day yesterday']")
             waitLoading(driver)
-        elif month > currMonth or day > currDay:
+        elif month > currMonth:
             ExecReq.clickGetElem(driver, "//*[@class='day tomorrow']")
             waitLoading(driver)
         else:
-            break
+            if day < currDay:
+                ExecReq.clickGetElem(driver, "//*[@class='day yesterday']")
+                waitLoading(driver)
+            elif day > currDay:
+                ExecReq.clickGetElem(driver, "//*[@class='day tomorrow']")
+                waitLoading(driver)
+            else:
+                break
     return driver
 
 def waitLoading(driver):
@@ -165,6 +154,7 @@ def getElemGame(driver, gameBaseName):
     return ExecReq.getElemByXPath("//*[contains(text(), '" + gameBaseName + "')]", driver)
 
 def gameIdForPlayDay(driverGameDay, lstGame, dropLigue, day, month, prevDay, prevDayMonth):
+    lstGameFind = list()
     try:
         ExecReq.clickGetElem(driverGameDay, "//*[contains(text(), 'Agree')]")
         ExecReq.clickGetElem(driverGameDay, "//*[contains(text(), 'Scheduled')]")
@@ -189,42 +179,53 @@ def gameIdForPlayDay(driverGameDay, lstGame, dropLigue, day, month, prevDay, pre
             print(ligueName)
             print(countGame)
             startI = i
+            
             while i < startI + (countGame) * 2 and i < len(elems):
-                resCmd = elems[i].text + elems[i + 1].text
-                elemFind = elems[i + 1].text.split('\n')[0]
-                resCmd = resCmd.translate({ord(c): None for c in '\n'})
-                # if len(resCmd.split(' W-')) > 1:
-                #     i += 2
-                #     continue
-                timeGame = resCmd.split()[0].split(":")
-                timeGame = int(timeGame[0]) * 60 + int(timeGame[1])
-                if timeGame == 0:
-                    timeGame = 24 * 60
-                print(resCmd)
-                isDrop = False
-                if 'FRO' in resCmd:
-                    i += 2
-                    print('drop')
-                    continue
+                try:
+                    resCmd = elems[i].text + elems[i + 1].text
+                    elemFind = elems[i + 1].text.split('\n')[0]
+                    resCmd = resCmd.translate({ord(c): None for c in '\n'})
+                    
+                    # if len(resCmd.split(' W-')) > 1:
+                    #     i += 2
+                    #     continue
+                    timeGame = resCmd.split()[0].split(":")
+                    timeGame = int(timeGame[0]) * 60 + int(timeGame[1])
+                    if timeGame == 0:
+                        timeGame = 24 * 60
+                    print(resCmd)
+                    isDrop = False
+                    for oneDropLigue in dropLigue:
+                        if oneDropLigue in ligueName:
+                            i += 2
+                            print('drop')
+                            isDrop = True
+                            break
 
-                for oneDropLigue in dropLigue:
-                    if oneDropLigue in ligueName:
+                    if isDrop:
+                        continue
+                    if 'FRO' in resCmd:
                         i += 2
-                        print('drop')
-                        isDrop = True
-                        break
-
-                if isDrop:
-                    continue
-                if timeGame != 24 * 60:
-                    #print("time 00:00")
-                    newGame = Game(timeMin=timeGame, teams=resCmd, ligue=ligueName, day=day, month=month, idOnPage=i, elemFind=elemFind, dayFind=day)
-                else:
-                    newGame = Game(timeMin=timeGame, teams=resCmd, ligue=ligueName, day=prevDay, month=prevDayMonth, idOnPage=i, elemFind=elemFind, dayFind=day)
-                lstGame.append(newGame)
-                i += 2
+                        print('drop FRO')
+                        continue
+                    if timeGame != 24 * 60:
+                        #print("time 00:00")
+                        newGame = Game(timeMin=timeGame, teams=resCmd, ligue=ligueName, day=day, month=month, idOnPage=i, elemFind=elemFind, dayFind=day)
+                    else:
+                        newGame = Game(timeMin=timeGame, teams=resCmd, ligue=ligueName, day=prevDay, month=prevDayMonth, idOnPage=i, elemFind=elemFind, dayFind=day)
+                    lstGameFind.append(newGame)
+                    i += 2
+                except:
+                    i += 2
+                    print("game except drop")
             j += 1
     except:
         print('Ошибка:\n', traceback.format_exc())
-    driverGameDay.close()
+        gameIdForPlayDay(driverGameDay, lstGame, dropLigue, day, month, prevDay, prevDayMonth)
+        lstGameFind.clear()
+    try:
+        driverGameDay.close()
+    except:
+        pass
+    lstGame.extend(lstGameFind)
     return lstGame
