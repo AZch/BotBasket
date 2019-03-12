@@ -33,7 +33,10 @@ def parseLastCntWin(elems, isFirstTeam, driver, seasonYearStart, seasonYearEnd):
         startTime = time.time()
         while True:
             if time.time() - startTime > 240:
-                break
+                driver.close()
+                driver.switch_to.window(driver.window_handles[1])
+                return False
+                #break
             if ExecReq.getElemByXPath("//*[contains(text(), 'Match Summary')]", driver) == False:
                 driver.close()
                 driver.switch_to.window(driver.window_handles[1])
